@@ -1,0 +1,155 @@
+./qemu-system-arm -M vexpress-a9 -m 1G -kernel /home/guoweibin/buildroot-2014.05/output/images/zImage -drive file=filename.img,if=virtio  -append "virtio_mmio.device=0x200@0x10013000:81 console=ttyAMA0,115200 root=/dev/mmcblk0" -serial stdio -net nic,model=lan9118 -net user
+
+-M vexpress-a9 -m 1G -kernel /home/guoweibin/buildroot-2014.05/output/images/zImage -append "virtio_mmio.device=0x200@0x10013000:81 console=ttyAMA0,115200 root=/dev/mmcblk0" -serial stdio -net nic,model=lan9118 -net user
+virtio_blk_handle_output
+
+handler SIGUSR1 pass noprint
+
+b virtio_blk_handle_output
+b virtio_blk_data_plane_start
+b handle_notify
+b virtio_blk_device_realize
+b virtio_blk_data_plane_create
+b virtio_blk_data_plane_destroy
+
+
+./configure --cross-prefix=aarch64-linux-gnu-  --target-list=aarch64-softmmu --with-coroutine=gthread --enable-fdt --enable-kvm --disable-werror --audio-drv-list="" --static
+
+./qemu-system-aarch64 -enable-kvm -kernel Image -m 256 -M virt -cpu cortex-a53 -nographic -append "earlyprintk console=ttyAMA0 mem=256M  --no-log"
+
+
+./qemu-system-aarch64 -enable-kvm -kernel Image -m 256 -M virt -cpu cortex-a53 -nographic -drive file=filename.img,if=virtio  -append "earlyprintk=pl011,0x9000000 console=ttyAMA0 mem=256M  --no-log"
+
+
+
+./qemu-system-aarch64 -enable-kvm -kernel Image -m 512 -M virt -cpu cortex-a53 -nographic -drive file=system.img,if=virtio -drive file=data.img,if=virtio -drive file=cache.img,if=virtio -append "earlyprintk console=ttyAMA0 mem=512M androidboot.hardware=goldfish boot_reason=4 androidboot.serialno=0123456789ABCDEF androidboot.bootreason=wdt_by_pass_pwk gpt=1  --no-log"
+
+./qemu-system-aarch64 -enable-kvm -kernel LImage -m 512 -M virt -cpu cortex-a53 -nographic -drive file=android.vdk,if=virtio -drive file=/mnt/obb/data.img,if=virtio -drive file=tmp.img,if=virtio -append "earlyprintk console=ttyAMA0 mem=512M androidboot.hardware=mt6795 boot_reason=4 androidboot.serialno=0123456789ABCDEF androidboot.bootreason=wdt_by_pass_pwk gpt=1  --no-log"
+
+
+./qemu-system-arm -M vexpress-a9 -m 1G -kernel zImage  -drive file=rootfs.ext2,if=sd -append "virtio_mmio.device=0x200@0x10013000:81 console=ttyAMA0,115200 root=/dev/mmcblk0" -serial stdio -net nic,model=lan9118 -net user
+
+
+
+./qemu-system-aarch64 -enable-kvm -kernel Image -m 512 -M virt -cpu cortex-a53 -nographic -drive file=system.img,if=virtio -drive file=data.img,if=virtio -drive file=cache.img,if=virtio -append "earlyprintk console=ttyAMA0 mem=512M androidboot.hardware=goldfish boot_reason=4 androidboot.serialno=0123456789ABCDEF androidboot.bootreason=wdt_by_pass_pwk gpt=1  --no-log"
+
+
+./qemu-system-aarch64 -enable-kvm -kernel Image -m 1524 -M virt -cpu cortex-a53 -nographic -smp 2,sockets=1,cores=2 -drive file=system.img,if=virtio -drive file=/system/data.img,if=virtio -drive file=cache.img,if=virtio -append "earlyprintk console=ttyAMA0 mem=1524M vmalloc=496M androidboot.hardware=goldfish boot_reason=4 androidboot.serialno=0123456789ABCDEF androidboot.bootreason=wdt_by_pass_pwk gpt=1 qemu=1 qemu.gles=0 ro.sf.lcd_density=480 --no-log"
+
+
+
+./qemu-system-aarch64 -enable-kvm -kernel Image -m 1024 -M virt -cpu cortex-a53 -nographic -smp 8,sockets=1,cores=8 -drive file=system.img,if=virtio -drive file=/system/data.img,if=virtio -drive file=cache.img,if=virtio -append "earlyprintk console=ttyAMA0 androidboot.hardware=goldfish boot_reason=4 androidboot.serialno=0123456789ABCDEF androidboot.bootreason=wdt_by_pass_pwk gpt=1 qemu=1 qemu.gles=0 ro.sf.lcd_density=480 --no-log"
+
+cp -f libandroid_runtime.so /system/lib64/
+cp -f libinputflinger.so /system/lib64/
+cp -f libinput.so /system/lib64/
+
+F:\MT6795\MT6795_EVB_Image\My>adb shell
+root@amt6795_wifi_l:/ # ./qemu-system-aarch64 -enable-kvm -kernel AImage -m 512 -M virt -cpu cortex-a53 -nographic -append "earlyprintk console=ttyAMA0 mem=512M androidboot.hardware=mt6795 boot_reason=4 androidboot.serialno=0123456789ABCDEF
+androidboot.bootreason=wdt_by_pass_pwk gpt=1 --no-log"
+
+root@amt6795_wifi_l:/ # cpuinfo
+cpuinfo
+/system/bin/sh: cpuinfo: not found
+127|root@amt6795_wifi_l:/ # cat /proc/cpuinfo
+cat /proc/cpuinfo
+Processor       : AArch64 Processor rev 2 (aarch64)
+processor       : 0
+BogoMIPS        : 26.00
+
+processor       : 1
+BogoMIPS        : 26.00
+
+Features        : fp asimd aes pmull sha1 sha2 crc32
+CPU implementer : 0x41
+CPU architecture: AArch64
+CPU variant     : 0x0
+CPU part        : 0xd03
+CPU revision    : 2
+
+Hardware        : MT6795
+root@amt6795_wifi_l:/ # cat /proc/cmdline
+cat /proc/cmdline
+console=tty0 console=ttyMT0,921600n1 root=/dev/ram vmalloc=496M slub_max_order=0 slub_debug=O androidboot.hardware=mt6795 bootopt=64S3,32N2,64N2 lcm=1-nt35595_fhd_dsi_cmd_truly_tps65132_drv fps=6078 vram=71303168 printk.disable_uart=0 bootp
+rof.pl_t=11041 bootprof.lk_t=1932 boot_reason=4 androidboot.serialno=0123456789ABCDEF androidboot.bootreason=wdt_by_pass_pwk gpt=1
+root@amt6795_wifi_l:/ #
+
+
+
+
+
+octl_get_fsinfo] fix->line_length[4352]
+octl_get_put_vsinfo] yoffset[0] magic[0xff]
+octl_get_fsinfo] fix->line_length[4352]
+handled fault: alignment fault (0x92000061) at 0x0000007fa7165000
+handled fault: alignment fault (0x92000061) at 0x0000007fa7165000
+handled fault: alignment fault (0x92000061) at 0x0000007fa7165000
+
+
+mv gralloc.default.so /system/lib/hw/
+
+
+root@amt6795_wifi_l:/proc # cat iomem
+cat iomem
+11007000-11007fff : 11007000.I2C0
+11008000-11008fff : 11008000.I2C1
+11009000-11009fff : 11009000.I2C2
+11010000-11010fff : 11010000.I2C3
+11270000-1127ffff : ssusb_base
+11280000-1128ffff : ssusb_sif
+11290000-1129ffff : ssusb_sif2
+40000000-f5ffffff : System RAM
+  40080000-40c9ffff : Kernel code
+  40d04000-412e2217 : Kernel data
+fb200000-fb9fffff : System RAM
+root@amt6795_wifi_l:/proc # cat cmdline
+
+cat /proc/iomem
+11007000-11007fff : 11007000.I2C0
+11008000-11008fff : 11008000.I2C1
+11009000-11009fff : 11009000.I2C2
+11010000-11010fff : 11010000.I2C3
+11270000-1127ffff : ssusb_base
+11280000-1128ffff : ssusb_sif
+11290000-1129ffff : ssusb_sif2
+40000000-a9ffffff : System RAM
+  40080000-40c9ffff : Kernel code
+  40d04000-412e2217 : Kernel data
+af200000-bfffffff : System RAM
+
+
+
+
+
+
+
+
+lxc配置
+./configure CC=aarch64-linux-android-gcc CFLAGS="-mandroid -mbionic -fPIE -pie -I /home/gwb/virt/aarch64/usr/include/" LDFLAGS="-fPIE -L /home/gwb/virt/aarch64/usr/lib/" --host=aarch64
+
+修改config.h中HAVE_SYS_CAPABILITY_H宏为0
+复制bonic库中的crtbegin_dynamic.o  crtbegin_so.o  crtend_android.o  crtend_so.o到src/lxc目录下
+
+修改makefile
+LXCTEMPLATEDIR = /usr/local/share/lxc/templates
+RUNTIME_PATH = /run
+localstatedir = ${prefix}/storage/sdcard0/lxc/
+CFLAGS = -mandroid -mbionic -fPIE -pie -I /home/gwb/virt/aarch64/usr/include/ -Wall
+复制liblxc.so 到/system/lib64/liblxc.so.1
+
+修改模板脚本/bin/bash 为/system/bin/sh
+
+创建：lxc-create -t ubuntu -n test -P /storage/sdcard0/lxc/
+运行：./lxc-start -n test -P /data/lxc -F --logfile aaa.log /init
+
+【init进程定位】：
+1.屏蔽init源码中重定向输入输出到/dev/null代码
+2.修改console 设备名称
+3.修改ERROR INFO 等宏定位为printf，打印更多信息
+4.对于LXC，挂载的文件系统已经存在dev及部分文件，屏蔽init中挂载/dev的代码
+5.文件系统中的init及rc文件权限需要符合要求，否则不会被执行
+chcon u:object_r:rootfs:s0 ./       
+6.可关闭selinux： 主机setenforce 0，虚拟android的init中屏蔽对selinux的初始化，并在服务启动service_start中屏蔽计算服务安全上下文代码，否则服务无法启动 
+修改init进程check_mac_perm固定返回1，使属性触发的服务可以正常启动,
+修改extern/libselinux/src/enabled.c中is_selinux_enable函数永远返回0，否则一些服务会检查selinux属性         
+7.屏蔽init.project.rc中 service wmt_loader，加载时会导致内核异常
